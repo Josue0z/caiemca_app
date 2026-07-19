@@ -1,0 +1,15 @@
+{
+  "welcome":"Welcome",
+  "createdFormLabel":"Created {created}",
+  "explore_forms":"Explore forms",
+  "forms":"Forms",
+  "users":"Users",
+  "services":"Services",
+  "workers":"Workers",
+  "brands":"Brands",
+  "airtypes":"Air Types",
+  "locations":"Locations",
+  "clients":"Clients",
+  "technicians":"Technicians"
+
+}

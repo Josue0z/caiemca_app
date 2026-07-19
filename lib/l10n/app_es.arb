@@ -1,0 +1,14 @@
+{
+  "welcome":"Bienvenido",
+  "createdFormLabel":"Creado {created}",
+  "explore_forms":"Explorar tus formularios",
+  "forms":"Formularios",
+  "users":"Usuarios",
+  "services":"Servicios",
+  "workers":"Trabajadores",
+  "brands":"Marcas",
+  "airtypes":"Tipos de Aires",
+  "locations":"Ubicaciones",
+  "clients":"Clientes",
+  "technicians":"Tecnicos"
+}

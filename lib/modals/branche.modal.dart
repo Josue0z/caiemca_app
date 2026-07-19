@@ -1,0 +1,55 @@
+import 'package:caiemca_app/functions.dart';
+import 'package:caiemca_app/models/branches/branche.dart';
+import 'package:caiemca_app/widgets/modal.caiemca.widget.dart';
+import 'package:flutter/material.dart';
+
+Future<T> showBrancheModal<T>({
+  required BuildContext context,
+  required BrancheCaiemca item,
+  bool editing = false,
+}) async {
+  final GlobalKey<FormState> formKey = GlobalKey();
+  TextEditingController name = TextEditingController(text: item.name ?? '');
+  submit() async {
+    if (formKey.currentState!.validate()) {
+      showLoader(context: context);
+      try {
+        item.name = name.text.trim();
+        if (editing) {
+          await item.update();
+        } else {
+          await item.create();
+        }
+        Navigator.pop(context);
+        Navigator.pop(context, item.toMap().toString());
+      } catch (e) {
+        Navigator.pop(context);
+        showTopSnackBar(context, message: e.toString(), color: Colors.red);
+      }
+    }
+  }
+
+  return await showDialog(
+    context: context,
+    builder: (ctx) => Form(
+      key: formKey,
+      child: ModalCaiemcaWidget(
+        title: editing ? 'Editando Sucursal' : 'Creando Sucursal...',
+        btnTitle: editing ? 'EDITAR' : 'CONFIRMAR',
+        height: 250,
+        onSubmit: submit,
+        children: [
+          TextFormField(
+            controller: name,
+            autofocus: true,
+            validator: (val) => val!.isEmpty ? 'CAMPO OBLIGATORIO' : null,
+            decoration: InputDecoration(
+              labelText: 'SUCURSAL',
+              hintText: 'Escribir algo...',
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
