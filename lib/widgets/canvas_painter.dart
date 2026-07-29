@@ -108,7 +108,7 @@ Future<Uint8List?> exportSignature() async {
                   HitTestBehavior.opaque, // captura todo el área, evita scroll
               onPanStart: (details) {
                 painter = Paint()
-                  ..color = Colors.black
+                  ..color = const ui.Color(0xFF0D7CD7)
                   ..style = PaintingStyle.stroke
                   ..strokeCap = StrokeCap.round
                   ..strokeWidth = 2;

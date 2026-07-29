@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:caiemca_app/apis/api.caiemca.dart';
 import 'package:caiemca_app/models/airitems/airitem.dart';
 import 'package:caiemca_app/models/servicedetails/servicedetails.dart';
+import 'package:caiemca_app/models/technicians/technicians.dart';
 import 'package:caiemca_app/models/techniciansDetails/techniciansDetails.dart';
 import 'package:caiemca_app/models/users/user.dart';
 import 'package:caiemca_app/settings.dart';
@@ -190,7 +191,65 @@ class FormCaiemca {
       throw e.response?.data['message'] ?? e.error.toString();
     }
   }
+  
+  Future<List<TechnicianCaiemca>> getTechniciansDetails()async{
+     try{
+        await auth();
+        var res = await apiCaiemca.get('/forms/get-technicians-details/$id');
+        if(res.statusCode == 200){
+  
+          var data = res.data;
 
+          print(data);
+       
+          return List.from(
+            (data as List<dynamic>).map((e) => TechnicianCaiemca( 
+            id: e['technicianId'],
+            name: e['description']
+          )).toList());
+        }
+        return [];
+     }on DioException catch(e){
+            throw e.response?.data['message'] ?? e.error.toString();
+     }
+  }
+
+  static Future<bool> updateTechniciansDetails({
+    required String formId,
+    required TechnicianCaiemca technician
+  })async{
+    try{
+      await auth();
+      var res = await apiCaiemca.post('/forms/update-technicians-details/$formId',
+      data: {
+        ...technician.toMap()
+      });
+      if(res.statusCode == 200){
+        return true;
+      }
+      return false;
+    }on DioException catch(e){
+         throw e.response?.data['message'] ?? e.error.toString();
+    }
+  }
+  static Future<bool> deleteTechniciansDetails({
+    required String formId,
+    required TechnicianCaiemca technician
+  })async{
+    try{
+      await auth();
+      var res = await apiCaiemca.delete('/forms/delete-technicians-details/$formId',
+      data: {
+        ...technician.toMap()
+      });
+      if(res.statusCode == 200){
+        return true;
+      }
+      return false;
+    }on DioException catch(e){
+         throw e.response?.data['message'] ?? e.error.toString();
+    }
+  }
 
   FormCaiemca copyWith({
     String? id,

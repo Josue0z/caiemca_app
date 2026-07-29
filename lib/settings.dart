@@ -38,6 +38,8 @@ const Color kCardBorderColor = Color(0xFFE0E0E0);
 
 
 UserCaiemca? currentUser;
+String? currentUsername;
+bool isEnabledFingerPrint = false;
 List<AirType> airsTypes = [];
 List<AirLocationCaiemca> airLocations = [];
 List<BrandCaiemca> brands = [];

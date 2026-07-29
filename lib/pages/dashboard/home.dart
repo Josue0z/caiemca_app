@@ -7,6 +7,7 @@ import 'package:caiemca_app/pages/dashboard/clients.dart';
 import 'package:caiemca_app/pages/dashboard/devices.dart';
 import 'package:caiemca_app/pages/dashboard/forms.dart';
 import 'package:caiemca_app/pages/dashboard/services.dart';
+import 'package:caiemca_app/pages/dashboard/settings.dart';
 import 'package:caiemca_app/pages/dashboard/technicians.dart';
 import 'package:caiemca_app/pages/dashboard/users.dart';
 import 'package:caiemca_app/pages/dashboard/workers.dart';
@@ -219,7 +220,12 @@ class _HomeDashboardState extends State<HomeDashboard> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (ctx) => SettingsPage()),
+                          );
+                        },
                         icon: Icon(
                           Icons.account_circle_outlined,
                           color: kPrimaryColor,

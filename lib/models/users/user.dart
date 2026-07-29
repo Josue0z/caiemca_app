@@ -232,7 +232,7 @@ class UserCaiemca implements CaiemcaItem<String> {
     currentUser = null;
     await Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (ctx) => LoginPage()),
+      MaterialPageRoute(builder: (ctx) => isEnabledFingerPrint ? AuthWithFingerPrintPage() : LoginPage()),
       (_) => false,
     );
   }

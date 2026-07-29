@@ -25,6 +25,7 @@ class DeviceCaiemca implements CaiemcaItem<int> {
   String? clientIdentification;
   double? amperes;
   double? volt;
+  double? capacity;
   String? companyId;
   DateTime? createdAt;
   DeviceCaiemca({
@@ -44,6 +45,7 @@ class DeviceCaiemca implements CaiemcaItem<int> {
     this.clientIdentification,
     this.amperes,
     this.volt,
+    this.capacity,
     this.companyId,
     this.createdAt,
   });
@@ -160,6 +162,7 @@ class DeviceCaiemca implements CaiemcaItem<int> {
     String? clientIdentification,
     double? amperes,
     double? volt,
+    double? capacity,
     String? companyId,
     DateTime? createdAt,
   }) {
@@ -180,6 +183,7 @@ class DeviceCaiemca implements CaiemcaItem<int> {
       clientIdentification: clientIdentification ?? this.clientIdentification,
       amperes: amperes ?? this.amperes,
       volt: volt ?? this.volt,
+      capacity: capacity ?? this.capacity,
       companyId: companyId ?? this.companyId,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -203,6 +207,7 @@ class DeviceCaiemca implements CaiemcaItem<int> {
       'clientIdentification': clientIdentification,
       'amperes': amperes,
       'volt': volt,
+      'capacity':capacity,
       'companyId': companyId,
       'createdAt': createdAt?.toIso8601String(),
     };
@@ -236,8 +241,9 @@ class DeviceCaiemca implements CaiemcaItem<int> {
       clientIdentification: map['clientIdentification'] != null
           ? map['clientIdentification'] as String
           : null,
-      amperes: map['amperes'] != null ? map['amperes'] as double : null,
-      volt: map['volt'] != null ? map['volt'] as double : null,
+      amperes: map['amperes'],
+      volt: map['volt'],
+      capacity: map['capacity'],
       companyId: map['companyId'] != null ? map['companyId'] as String : null,
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt']).toLocal()
@@ -252,7 +258,7 @@ class DeviceCaiemca implements CaiemcaItem<int> {
 
   @override
   String toString() {
-    return 'DeviceCaiemca(id: $id, modelId: $modelId, modelName: $modelName, brandId: $brandId, brandName: $brandName, airTypeId: $airTypeId, airTypeName: $airTypeName, locationId: $locationId, airLocationName: $airLocationName, brancheId: $brancheId, brancheName: $brancheName, serialNumber: $serialNumber, clientName: $clientName, clientIdentification: $clientIdentification, amperes: $amperes, volt: $volt, companyId: $companyId, createdAt: $createdAt)';
+    return 'DeviceCaiemca(id: $id, modelId: $modelId, modelName: $modelName, brandId: $brandId, brandName: $brandName, airTypeId: $airTypeId, airTypeName: $airTypeName, locationId: $locationId, airLocationName: $airLocationName, brancheId: $brancheId, brancheName: $brancheName, serialNumber: $serialNumber, clientName: $clientName, clientIdentification: $clientIdentification, amperes: $amperes, volt: $volt, capacity: $capacity, companyId: $companyId, createdAt: $createdAt)';
   }
 
   @override

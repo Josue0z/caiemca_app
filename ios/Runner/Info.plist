@@ -53,5 +53,7 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>NSFaceIDUsageDescription</key>
+        <string>Your app needs to authenticate using your biometric data for secure access</string>
 	</dict>
 </plist>

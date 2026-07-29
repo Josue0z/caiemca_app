@@ -4,6 +4,7 @@ import 'package:caiemca_app/models/models/model.dart';
 import 'package:caiemca_app/settings.dart';
 import 'package:caiemca_app/widgets/modal.caiemca.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Future<T> showDeviceModal<T>({
   required BuildContext context,
@@ -32,6 +33,9 @@ Future<T> showDeviceModal<T>({
   TextEditingController volt = TextEditingController(
     text: item.volt == 0 ? '' : item.volt?.toStringAsFixed(2) ?? '',
   );
+    TextEditingController capacity = TextEditingController(
+    text: item.capacity == 0 ? '' : item.capacity?.toStringAsFixed(2) ?? '',
+  );
   submit() async {
     if (formKey.currentState!.validate()) {
       showLoader(context: context);
@@ -45,6 +49,7 @@ Future<T> showDeviceModal<T>({
             : serialNumber.text.trim();
         item.volt = double.tryParse(volt.text) ?? 0.00;
         item.amperes = double.tryParse(amperes.text) ?? 0.00;
+        item.capacity = double.tryParse(capacity.text) ?? 0.00;
 
         if (editing) {
           await item.update();
@@ -101,6 +106,7 @@ Future<T> showDeviceModal<T>({
             margin: EdgeInsets.symmetric(vertical: kDefaultPadding / 2),
             child: DropdownButtonFormField(
               initialValue: currentAirLocationId,
+              isExpanded: true,
               validator: (val) => val == null ? 'CAMPO OBLIGATORIO' : null,
               decoration: InputDecoration(labelText: 'UBICACION'),
               items: List.generate(airLocations.length, (index) {
@@ -134,7 +140,7 @@ Future<T> showDeviceModal<T>({
               validator: (val) => val!.isEmpty ? 'CAMPO OBLIGATORIO' : null,
               decoration: InputDecoration(
                 labelText: 'SERIAL',
-                hintText: 'Escribir algo...',
+                hintText: 'XXXXXXXXXXXXXXXX',
               ),
             ),
           ),
@@ -143,10 +149,15 @@ Future<T> showDeviceModal<T>({
             margin: EdgeInsets.symmetric(vertical: kDefaultPadding / 2),
             child: TextFormField(
               controller: amperes,
+                keyboardType: TextInputType.number,
+              inputFormatters: [
+                   FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,2}$'))
+              ],
               autofocus: true,
               decoration: InputDecoration(
                 labelText: 'AMPERES',
-                hintText: 'Escribir algo...',
+                hintText: '0.00',
               ),
             ),
           ),
@@ -155,12 +166,37 @@ Future<T> showDeviceModal<T>({
             margin: EdgeInsets.symmetric(vertical: kDefaultPadding / 2),
             child: TextFormField(
               controller: volt,
+                keyboardType: TextInputType.number,
+              inputFormatters: [
+                   FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,2}$'))
+              ],
               autofocus: true,
               textInputAction: TextInputAction.send,
               onFieldSubmitted: (_) => submit(),
               decoration: InputDecoration(
                 labelText: 'VOLT',
-                hintText: 'Escribir algo...',
+                hintText: '0.00',
+              ),
+            ),
+          ),
+
+          
+          Container(
+            margin: EdgeInsets.symmetric(vertical: kDefaultPadding / 2),
+            child: TextFormField(
+              controller: capacity,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                   FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,2}$'))
+              ],
+              autofocus: true,
+              textInputAction: TextInputAction.send,
+              onFieldSubmitted: (_) => submit(),
+              decoration: InputDecoration(
+                labelText: 'CAPACIDAD BTU',
+                hintText: '0.00',
               ),
             ),
           ),

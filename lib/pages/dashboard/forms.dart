@@ -12,9 +12,11 @@ import 'package:caiemca_app/functions.dart';
 import 'package:caiemca_app/models/models/model.dart';
 import 'package:caiemca_app/models/services/service.dart';
 import 'package:caiemca_app/models/technicians/technicians.dart';
+import 'package:caiemca_app/models/techniciansDetails/techniciansDetails.dart';
 import 'package:caiemca_app/pages/crud/form_generator_page.dart';
 import 'package:caiemca_app/pages/dashboard/signature.box.page.dart';
 import 'package:caiemca_app/settings.dart';
+import 'package:caiemca_app/widgets/btn.caiemca.button.widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -36,12 +38,15 @@ class _FormsDashboardState extends State<FormsDashboard> {
 
   List<FormCaiemca> forms = [];
 
+  List<TechnicianCaiemca> selectedTechnicians = [];
+  List<TechnicianCaiemca> unSelectedTechnicians = [];
+
   Future<void> _loadForms({
-        List<String> selectedBrands = const [],
+    List<String> selectedBrands = const [],
     List<String> selectedModels = const [],
     List<String> selectedAirTypes = const [],
     List<String> selectedLocations = const [],
-    List<String> selectedBranches = const []
+    List<String> selectedBranches = const [],
   }) async {
     try {
       forms = await FormCaiemca.get(
@@ -49,7 +54,7 @@ class _FormsDashboardState extends State<FormsDashboard> {
         selectedModels: selectedModels,
         selectedAirTypes: selectedAirTypes,
         selectedLocations: selectedLocations,
-        selectedBranches: selectedBranches
+        selectedBranches: selectedBranches,
       );
       setState(() {});
     } catch (e) {
@@ -66,7 +71,7 @@ class _FormsDashboardState extends State<FormsDashboard> {
         dir.path,
         'caiemca',
         'pdfs',
-        'CAIEMCA_REPORTE_${form.formNumber}.pdf',
+        '${form.clientName}_${form.branchName}_CAIEMCA_REPORTE_${form.formNumber}.pdf',
       );
 
       String url = form.formUrl;
@@ -90,7 +95,7 @@ class _FormsDashboardState extends State<FormsDashboard> {
         dir.path,
         'caiemca',
         'pdfs',
-        'CAIEMCA_REPORTE_${form.formNumber}.pdf',
+        '${form.clientName}_${form.branchName}_CAIEMCA_REPORTE_${form.formNumber}.pdf',
       );
 
       String url = form.formUrl;
@@ -119,6 +124,115 @@ class _FormsDashboardState extends State<FormsDashboard> {
     }
   }
 
+  _openTechniciansSelector(FormCaiemca form) async {
+    Navigator.pop(context);
+    showLoader(context: context);
+    try {
+      allTechnicians = await TechnicianCaiemca.get();
+      selectedTechnicians = await form.getTechniciansDetails();
+
+      Navigator.pop(context);
+      await showModalBottomSheet(
+        context: context,
+        builder: (ctx) {
+          return StatefulBuilder(
+            builder: (ctx, setStateModal) {
+              return SizedBox(
+                width: double.infinity,
+                height: 300,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(kDefaultPadding / 2),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: Colors.black12),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'SELECCIONAR TECNICOS (${allTechnicians.length})',
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: allTechnicians.length,
+                        itemBuilder: (ctx, i) {
+                          var technician = allTechnicians[i];
+                          var has = selectedTechnicians.any(
+                            (x) => x.id == technician.id,
+                          );
+
+                          return ListTile(
+                            leading: Checkbox(
+                              value: has,
+                              onChanged: (val) async {
+                                try {
+                                  if (has) {
+                                    showLoader(context: context);
+                                    await FormCaiemca.deleteTechniciansDetails(
+                                      formId: form.id ?? '',
+                                      technician: technician
+                                    );
+                                    Navigator.pop(context);
+                                    selectedTechnicians.removeWhere(
+                                      (x) => x.id == technician.id,
+                                    );
+                                  } else {
+                                    showLoader(context: context);
+                                    await FormCaiemca.updateTechniciansDetails(
+                                      formId: form.id ?? '',
+                                      technician: technician,
+                                    );
+                                    Navigator.pop(context);
+
+                                    selectedTechnicians.add(technician);
+                                  }
+                                } catch (e) {
+                                  Navigator.pop(context);
+                                  showTopSnackBar(
+                                    context,
+                                    message: e.toString(),
+                                    color: Colors.red,
+                                  );
+                                }
+
+                                setStateModal(() {});
+                              },
+                            ),
+                            title: Text(technician.name ?? ''),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      selectedTechnicians = [];
+    } catch (e) {
+      Navigator.pop(context);
+      showTopSnackBar(context, message: e.toString(), color: Colors.red);
+    }
+  }
+
   _handlerOptions(option, FormCaiemca form) async {
     var val = option['id'];
     switch (val) {
@@ -133,7 +247,11 @@ class _FormsDashboardState extends State<FormsDashboard> {
           _openSignatureBox(form);
         }
 
+      case 4:
+        _openTechniciansSelector(form);
+
         break;
+      default:
     }
   }
 
@@ -277,21 +395,19 @@ class _FormsDashboardState extends State<FormsDashboard> {
                 airLocations = await AirLocationCaiemca.get();
                 allBranches = await BrancheCaiemca.get();
                 Navigator.pop(context);
-               var res =  await showFiltersModal(context: context);
+                var res = await showFiltersModal(context: context);
 
-               if(res != null){
-           
-                setState(() {
-                  future =  _loadForms(
-                  selectedBrands: res['selectedBrands'],
-                  selectedModels: res['selectedModels'],
-                  selectedAirTypes: res['selectedAirTypes'],
-                  selectedBranches: res['selectedBranches'],
-                  selectedLocations: res['selectedLocations']
-                  
-                );
-                });
-               }
+                if (res != null) {
+                  setState(() {
+                    future = _loadForms(
+                      selectedBrands: res['selectedBrands'],
+                      selectedModels: res['selectedModels'],
+                      selectedAirTypes: res['selectedAirTypes'],
+                      selectedBranches: res['selectedBranches'],
+                      selectedLocations: res['selectedLocations'],
+                    );
+                  });
+                }
               } catch (e) {
                 Navigator.pop(context);
                 showTopSnackBar(
@@ -339,6 +455,13 @@ class _FormsDashboardState extends State<FormsDashboard> {
                   'id': 2,
                   'name': 'Compartir Formulario .PDF',
                   'icon': Icon(Icons.share_outlined),
+                  'enabled': true,
+                },
+
+                {
+                  'id': 4,
+                  'name': 'Editar Tecnicos',
+                  'icon': Icon(Icons.edit),
                   'enabled': true,
                 },
               ];

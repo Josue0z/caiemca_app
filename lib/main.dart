@@ -11,6 +11,9 @@ import 'package:moment_dart/moment_dart.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLocalStorage();
+
+  currentUsername = localStorage.getItem('caiemca_username');
+  isEnabledFingerPrint = localStorage.getItem('caiemca_fingerprint') == 'ok';
   // Detectar idioma del sistema
   final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
 
@@ -98,7 +101,7 @@ class MyApp extends StatelessWidget {
         ),
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
       ),
-      home: LoginPage(),
+      home: isEnabledFingerPrint  ? AuthWithFingerPrintPage() : LoginPage(),
     );
   }
 }

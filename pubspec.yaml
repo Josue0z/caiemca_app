@@ -49,6 +49,7 @@ dependencies:
   icons_launcher: ^3.0.3
   flutter_native_splash: ^2.4.7
   qr_flutter: ^4.1.0
+  local_auth: ^3.0.1
   
 
 dev_dependencies:
